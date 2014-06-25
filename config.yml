@@ -6,7 +6,7 @@
 ### OBM configuration ####
 
 # OBM version
-obm_major_version: 2.5
+obm_major_version: 3.0
 
 # Public URL of the OBM web interface
 obm_external_url: obm.example.com
