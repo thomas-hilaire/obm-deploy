@@ -23,6 +23,10 @@ directoryservers
 obmfullservers
 dbservers
 
+[cassandraservers:children]
+obmfullservers
+dbservers
+
 [uiservers:children]
 obmfullservers
 webservers

@@ -1,0 +1,8 @@
+---
+- name: Copy Cassandra yum repo file
+  copy: src=datastax.repo dest=/etc/yum.repos.d/datastax.repo
+  tags: cassandra
+
+- name: Install Cassandra
+  yum: pkg=dsc20 state=present
+  tags: cassandra

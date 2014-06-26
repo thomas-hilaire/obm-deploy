@@ -1,0 +1,28 @@
+---
+- name: change cassandra authenticator
+  shell: 'sed -i "s/^authenticator: AllowAllAuthenticator$/authenticator: PasswordAuthenticator/" /etc/cassandra/conf/cassandra.yaml'
+  tags: cassandra
+
+- name: Restart Cassandra
+  service: name=cassandra state=restarted
+  tags: cassandra
+
+- name: copy cassandra scripts
+  copy: src={{ item }} dest=/
+  with_items:
+   - init.cql
+   - drop_user.cql
+  tags: cassandra
+
+- name: drop opush user
+  shell: cqlsh -u cassandra -p cassandra -f /drop_user.cql localhost
+  register: result
+  retries: 60
+  delay: 2
+  until: result.rc != 1
+  failed_when: False
+  tags: cassandra
+
+- name: install cassandra init script
+  shell: cqlsh -u cassandra -p cassandra -f /init.cql localhost
+  tags: cassandra
