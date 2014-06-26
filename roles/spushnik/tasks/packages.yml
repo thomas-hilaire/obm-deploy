@@ -2,3 +2,7 @@
 - name: Install Spushnik Probe 
   yum: pkg=spushnik state=present
   tags: spushnik
+
+- name: Start Spushnik Probe
+  service: name=spushnik state=started
+  tags: spushnik

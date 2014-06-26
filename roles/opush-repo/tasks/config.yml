@@ -1,0 +1,3 @@
+- name: Copy Opush yum repo file
+  copy: src=opush.repo dest=/etc/yum.repos.d/opush.repo
+  tags: opush-repo

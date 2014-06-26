@@ -3,3 +3,4 @@ dependencies:
  - { role: java } 
  - { role: postgres-common }
  - { role: obm-conf }
+ - { role: opush-repo }

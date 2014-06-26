@@ -1,0 +1,5 @@
+[opush]
+name=opush
+baseurl=http://packages.obm.org/rpm/opush/stable/$releasever
+enabled=1
+gpgcheck=0

@@ -1,4 +1,4 @@
 ---
 - name: Restart OPush
-  service: name=jetty6 state=restarted
+  service: name=opush state=restarted
   tags: opush

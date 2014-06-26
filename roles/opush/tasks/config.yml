@@ -1,14 +1,4 @@
 ---
-# Fix jetty6 init script (refers http://ci-obm.linagora.com/jira/browse/OBMFULL-5592)
-- name: Fix jetty6 init script
-  lineinfile: >
-   line="	exit $?"
-   dest=/etc/init.d/jetty6
-   insertafter=".*status -p.*"
-  notify: 
-      - Restart OPush
-  tags: opush
-
 - name: Deploy ldap_conf.ini 
   template: src=ldap_conf.ini dest=/etc/opush/ldap_conf.ini
   tags: opush
