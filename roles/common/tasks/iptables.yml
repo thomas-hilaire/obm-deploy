@@ -1,7 +1,10 @@
 ---
 - name: Stop IPTables services
-  service: name={{ item }} state=stopped enabled=no
-  with_items:
-   - iptables
-   - ip6tables
+  service: name=iptables state=stopped enabled=no
   tags: iptables
+
+- name: Stop IP6Tables services
+  service: name=ip6tables state=stopped enabled=no
+  failed_when: False
+  tags: iptables
+
