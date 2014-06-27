@@ -1,0 +1,11 @@
+[obm-contrib]
+name=obm-contrib
+baseurl=http://packages.obm.org/rpm/30/3.0.0-rc2/contrib/$releasever
+enabled=1
+gpgcheck=0
+
+[obm-stable]
+name=obm-stable
+baseurl=http://packages.obm.org/rpm/30/3.0.0-rc2/latest/$releasever
+enabled=1
+gpgcheck=0

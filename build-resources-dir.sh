@@ -23,10 +23,6 @@ echo "### Download Oracle JDK RPM ###"
 if [ ! -f jdk-6u45-linux-x64-rpm.bin ]; then
     wget -q http://uni-smr.ac.ru/archive/dev/java/SDKs/sun/j2se/6/jdk-6u45-linux-x64-rpm.bin
 fi
-echo "### Download obm-release RPM ###"
-if [ ! -f obm-release.noarch.rpm ]; then
-    wget -q http://packages.obm.org/rpm/25/release/obm-release.noarch.rpm
-fi
 echo "### Download PG91 repo RPM ###"
 if [ ! -f pgdg-centos91-9.1-4.noarch.rpm ]; then
     wget -q http://yum.postgresql.org/9.1/redhat/rhel-6-x86_64/pgdg-centos91-9.1-4.noarch.rpm
