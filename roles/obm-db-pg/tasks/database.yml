@@ -21,27 +21,15 @@
    line="#Defaults    requiretty"
   tags: obm-db
 
-- name: Create OBM postgres user
-  postgresql_user:
-   name={{ obm_db_user }}
-   password={{ obm_db_password }}
-   role_attr_flags=CREATEDB,NOSUPERUSER,NOCREATEROLE
-  sudo: yes
-  sudo_user: postgres
-  delegate_to: "{{ obm_db_master_host }}"
-  tags: obm-db
+- name: DIRTY - Copy obm-conf template
+  shell: cp /etc/obm/conf/00-global.ini /etc/obm/obm_conf.ini
 
 - name: Create OBM database
-  postgresql_db:
-   name={{ obm_db_name }}
-   owner={{ obm_db_user }}
-   encoding='UTF-8'
-  sudo: yes
-  sudo_user: postgres
-  delegate_to: "{{ obm_db_master_host }}"
+  shell: ./install_obmdb.sh full
+  args:
+    chdir: /usr/share/obm/scripts/creation/
   notify:
     - Reload Postgres
-    - Init Postgres database
   tags: obm-db
 
 - name: Enable requiretty
