@@ -21,13 +21,11 @@
    line="#Defaults    requiretty"
   tags: obm-db
 
-- name: DIRTY - Copy obm-conf template
-  shell: cp /etc/obm/conf/00-global.ini /etc/obm/obm_conf.ini
-
 - name: Create OBM database
   shell: ./install_obmdb.sh full
   args:
     chdir: /usr/share/obm/scripts/creation/
+  delegate_to: "{{ obm_db_master_host }}"
   notify:
     - Reload Postgres
   tags: obm-db

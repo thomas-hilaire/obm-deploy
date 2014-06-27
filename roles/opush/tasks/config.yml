@@ -3,7 +3,15 @@
   template: src=ldap_conf.ini dest=/etc/opush/ldap_conf.ini
   tags: opush
 
-- name: Deploy ldap_conf.ini 
+- name: Deploy cassandra.ini 
+  template: src=cassandra.ini dest=/etc/opush/cassandra.ini
+  tags: opush
+
+- name: Deploy opush.ini 
+  template: src=opush.ini dest=/etc/opush/opush.ini
+  tags: opush
+
+- name: Deploy logback.xml
   template: src=logback.xml dest=/etc/opush/logback.xml
   notify: 
       - Restart OPush
@@ -14,4 +22,6 @@
   with_items:
    - ldap_conf.ini
    - logback.xml
+   - cassandra.ini
+   - opush.ini
   tags: opush
