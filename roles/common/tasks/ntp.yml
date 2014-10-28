@@ -3,7 +3,6 @@
   yum: pkg=ntp
   notify:
    - Approximate date using local host
-   - Set approximate system date
   tags:
       - common
       - ntp

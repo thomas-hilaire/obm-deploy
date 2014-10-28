@@ -10,6 +10,7 @@
   with_items:
    - iptables
    - ip6tables
+  failed_when: False
   tags:
       - common
       - iptables

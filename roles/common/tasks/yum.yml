@@ -62,6 +62,7 @@
     dest=/etc/yum/vars/releasever
     backrefs=yes
   when: ansible_os_family == "RedHat"
+  failed_when: False
   tags:
    - common
    - yum

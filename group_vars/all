@@ -10,7 +10,7 @@ admin_net: "{% if admin_net_tmp == 'undefined' %}{{ ansible_default_ipv4['networ
 
 version: "{{ obm_version | default('3.0.0') }}"
 
-major_version: "{% if version|length == 5 %}{{ version[0:3] }}{% else %}3.0{% endif %}"
+major_version: "3.0"
 short_version: "{{ major_version | replace('.', '') }}"
 
 external_tmp: "{{ obm_external_url | default('undefined') }}"
