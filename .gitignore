@@ -1,6 +1,5 @@
 collected_files
 certificates
-ansible
 obm-deploy-dev
 ansible.cfg
 docs.ansible.com
@@ -9,4 +8,3 @@ resources
 testinv
 *.pyc
 .vagrant
-*.pub

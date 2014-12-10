@@ -5,8 +5,7 @@
       regexp="^certs\.push.*cacert.pem"
       dest={{ autoconf_client_dir }}/modules/certs/certs.jsm
       state=present
-  delegate_to: item
-  with_items: "{{ groups['autoconfservers'] }}"
+  delegate_to: "{{ autoconf_host }}"
   when: groups['autoconfservers'][0] is defined
   tags: obm-autoconf
 
@@ -15,15 +14,13 @@
       line="certs.push({file: {{ ca_file | basename }}})"
       dest={{ autoconf_client_dir }}/modules/certs/certs.jsm
       state=present
-  delegate_to: item
-  with_items: "{{ groups['autoconfservers'] }}"
+  delegate_to: "{{ autoconf_host }}"
   when: groups['autoconfservers'][0] is defined
   tags: obm-autoconf
 
 - name: Build OBM-Autoconf client
   shell: >
       zip -r {{ xpi_dir }}/obm-autoconf-client.xpi {{ autoconf_client_dir }}/*
-  delegate_to: item
-  with_items: "{{ groups['autoconfservers'] }}"
+  delegate_to: "{{ autoconf_host }}"
   when: groups['autoconfservers'][0] is defined
   tags: obm-autoconf

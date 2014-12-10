@@ -1,155 +1,141 @@
+
 <a name="top-page"></a>
 
-Ansible based Open Business Management ([**OBM**](http://obm.org "The new generation of collaborative software")) full-featured deployment tool.
+# OBM BENCHMARKING
 
-*OBM Installation made easy !*
+## DEPLOY OBM
 
-#### Table of contents
+### Create machines on the hypervisor
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+    /root/linagora/scripts/bench-shutdown-vms.sh
 
-- [OBM-Deploy project](#obm-deploy-project)
-  - [Objectives](#objectives)
-  - [Current Status](#current-status)
-  - [Disclaimer](#disclaimer)
-  - [Need Help](#need-help)
-- [Documentation](#documentation)
-  - [About ansible](#about-ansible)
-  - [Installation](#installation)
-  - [Quick start](#quick-start)
-  - [Inventories](#inventories)
-  - [Configuration](#configuration)
-  - [Roles index](#roles-index)
-  - [Mirror Mode](#mirror-mode)
-  - [Vagrant](#vagrant)
-- [Development](#development)
-  - [Roadmap](#roadmap)
-  - [Get involved](#get-involved)
+then, once "xl list" does not return "bench-*" machines anymore run:
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+    /root/linagora/scripts/bench-create-vms.sh
 
-<br />
-OBM-Deploy project  [&#x25B2;](#top-page "back to top")
-==================
+install the ssh public key (reply 'yes', password is 'linagora')
 
-<a name="objectives"></a>
+    /root/linagora/scripts/bench-allow-ssh-vms.sh
 
-Objectives
-----------
+### Set their IPs in ./docker/run.sh, like (should be already done)
 
- - Quickly build deployment environments
- - Standardize OBM installation
- - Separate configuration management from packaging
- - Make deployments much more simple and efficient
+    172.16.24.101   bench-opush1.ci.obm-int.dc1
+    172.16.24.134   bench-opush2.ci.obm-int.dc1
+    172.16.24.135   bench-opush3.ci.obm-int.dc1
+    172.16.24.137   bench-obm-3.ci.obm-int.dc1
+
+### Deploy OBM services via obm-deploy and docker
+
+    docker build --force-rm --tag bench-xen-obm-deployer .
+    docker run -ti --rm --name bench-xen-obm-deployer1 bench-xen-obm-deployer
+
+## PREPARE MACHINES
+
+### Restart obm-locator (on bench-obm-3)
+/etc/init.d/obm-locator restart
+
+### Install obm-imap-archive
+yum install obm-imap-archive
+
+### Give rights for admin on every domain (on bench-obm-3)
+"Profile utilisateur" / admin / modify /
+
+### Configure Opush (on bench-opush1)
+modify /etc/opush/opush.ini to get entries like:
+
+    host=bench-obm-3.ci.obm-int.dc1
+    dbtype=PGSQL
+    db=obm
+    user=obm
+    password=obm
+    external-url=bench-obm-3.ci.obm-int.dc1
+    transaction-timeout=5
+    transaction-timeout-unit=minutes
+    database-max-connection-pool-size = 100
+
+then
+
+    /etc/init.d/opush restart
+    ssh admin0@localhost -p 5665
+    schema install
+    /etc/init.d/opush restart
+
+### Repare postfix (on bench-obm-3)
+chmod 644 /etc/postfix/{main.cf,master.cf}
+/etc/init.d/postfix restart
+
+### Start spushnik (on bench-obm-3)
+/etc/init.d/spushnik restart
+
+## Create hosts, domain and users
+
+### Allow .dc1 hostname
+
+    sed -i 's!$php_regexp_fqdn.*$!$php_regexp_fqdn = "/^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z0-9]{2,6}$/";!g' /usr/share/obm/obminclude/global.inc
 
 
-<a name="current-status"></a>
+### HOST 1 - OBM
+* name: bench-obm-3
+* domain: global
+* ip: 172.16.24.137
+* fqdn: bench-obm-3.ci.obm-int.dc1
+* roles: all but opush, ftp, supervision
 
-Current Status
---------------
+### HOST 2 - Opush
+* name: bench-opush1
+* domain: global
+* ip: 172.16.24.101
+* fqdn: bench-opush1.ci.obm-int.dc1
+* roles: opush
 
- - Centos 6 and RHEL 6 support
- - OBM 2.5 and OBM 3.0 branches
- - Support remote hosts without direct internet access
- - No clustering feature available yet
+### DOMAIN
+* label: bench-obm
+* domain name: bench-obm.lan
+* assign all roles
 
-<a name="disclaimer"></a>
+### CREATE USER
+* name: admin
+* pwd : admin
+* role: admin
+* email: admin
+* domain: bench-obm
 
-Disclaimer
-----------
+### RUN THE AUTOMATE AS NEEDED
 
-OBM-Deploy automatically updates and sometimes overwrites your configuration files.
-Its behavior is subject to change. Use it with caution, especially in production.
-We discourage you to use it to update an already installed OBM infrastructure.
-OBM-Deploy isn't included yet in Linagora's commercial support offers.
+### Verify with the healthcheck
+1) add the user-test in /etc/obm/healthcheck.ini
 
-<a name="need-help"></a>
+    [test-user]
+    login=admin
+    password=admin
 
-Need Help
----------
+2) https://bench-obm-3.ci.obm-int.dc1/healthcheck/
 
-Need help using obm-deploy ?
-Use our [**mailing-list**](http://obm.org/node/19 "OBM official mailing-list") or our [**#obm IRC channel**](http://irc.lc/freenode/obm/ "Webchat to official #obm channel on freenode") on freenode to ask your questions.
+Use admin/linagora as credentials
 
-<a name="documentation"></a>
+3) send an email with 'admin' to itself using the webmail
 
-<br />
-Documentation  [&#x25B2;](#top-page "back to top")
-=============
+### CREATE 100 USERS
+* Logout then login on the "bench-obm.lan" domain with admin/admin
+* Users / Import / here use the createManyUsersByUiImport.csv file
+* Run the automate
 
-<a name="about-ansible"></a>
+### TO RESET A MACHINE  (on bench-obm-3)
 
-About ansible
--------------
+#### Re init db
 
-[About ansible](docs/ansible.mkd) : Become familiar with basic Ansible concepts
+    psql -U obm -W -h bench-obm-3.ci.obm-int.dc1
+    CREATE INDEX opush_folder_snapshot_state_id on opush_folder_snapshot (folder_sync_state_id);
+    CREATE INDEX opush_folder_snapshot_collection_id on opush_folder_snapshot (collection_id);
+    TRUNCATE opush_device, event, contact CASCADE;
 
-<a name="installation"></a>
+#### Re init solr
+    
+    /etc/init.d/obm-tomcat stop
+    rm -fR /var/solr/contact/data/index
+    rm -fR /var/solr/event/data/index
+    rm -fr /var/lib/sync/jms/data
+    /etc/init.d/obm-tomcat start
+    python /usr/share/obm-solr/obm_index_init.py
+    /etc/init.d/obm-tomcat restart
 
-Installation
-------------
-
-[Installation](docs/install.mkd) : Instructions to install OBM-Deploy.
-
-<a name="quick-start"></a>
-
-Quick start
------------
-
-[Quickstart](docs/quickstart.mkd) : Run your first deployment now.
-
-<a name="inventories"></a>
-
-Inventories
------------
-
-[Inventories](docs/inventories.mkd) : Construct more complex infrastructures.
-
-<a name="configuration"></a>
-
-Configuration
--------------
-
-[Configuration](docs/configuration.mkd) : Learn how to fine-tune your deployment.
-
-<a name="roles-index"></a>
-
-Roles index
------------
-
-[Roles](docs/roles.mkd) : Take a look under the hood.
-
-<a name="mirror-mode"></a>
-
-Mirror Mode
------------
-
-[Mirror-mode](docs/mirror-mode.mkd) : Deploy remote nodes without Internet access.
-
-<a name="vagrant"></a>
-
-Vagrant
--------
-
-[Vagrant](docs/vagrant.mkd) : Automatically create remote VMs using any hypervisor.
-
-<a name="development"></a>
-
-<br />
-Development  [&#x25B2;](#top-page "back to top")
-===========
-
-<a name="roadmap"></a>
-
-Roadmap
--------
-
-[Roadmap](docs/roadmap.mkd) : What you can hope for the future.
-
-<a name="get-involved"></a>
-
-Get involved
-------------
-
-[Contribute](docs/contribute.mkd) : Leave your own mark on the project.

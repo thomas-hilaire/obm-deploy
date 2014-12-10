@@ -19,7 +19,9 @@ config_version: 0.2
 #### OBM configuration ####
 
 ## OBM version
-#obm_version: 3.0.0
+obm_version: 3.1.0
+
+remove_banner: "yes"
 
 ## Public URL of the OBM web interface
 #obm_external_url: "{{ inventory_hostname }}"
@@ -49,13 +51,13 @@ config_version: 0.2
 #obm_cassandra_password: opush
 
 ## The obm-sync host used by obm-ui
-#obm_sync_host: "{{ groups['syncservers'][0] }}"
+obm_sync_host: "{{ groups['syncservers'][0] }}"
 
 ## The opush host used by obm-ui
-#obm_opush_host: "{{ groups['opushservers'][0] }}"
+obm_opush_host: "{{ groups['opushservers'][0] }}"
 
 ## The server hosting the directory or the LDAP load balancer
-#obm_ldap_host: "{{ groups['ldapservers'][0] }}"
+obm_ldap_host: "{{ groups['ldapservers'][0] }}"
 
 ## The server hosting the directory or the master of replication
 #obm_ldap_master_host: "{{ obm_ldap_host }}"
