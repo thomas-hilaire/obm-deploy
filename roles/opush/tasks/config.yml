@@ -18,17 +18,4 @@
   copy: src=logback.xml dest=/etc/opush/logback.xml mode=0644 backup=yes
   notify: 
       - Restart OPush2
-      - Restart OPush3
   tags: opush
-
-- name: Deploy Opush Cassandra configuration
-  template: src=cassandra.ini dest=/etc/opush/cassandra.ini mode=0644 backup=yes
-  when: major_version | version_compare('3.0', '>=')
-  notify:
-      - Restart OPush3
-  tags: opush
-
-- name: Start Opush3
-  service: name=opush enabled=yes state=started
-  when: major_version | version_compare('3.0', '>=')
-  tags: opush  

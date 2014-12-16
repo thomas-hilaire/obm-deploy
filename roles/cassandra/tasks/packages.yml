@@ -1,7 +1,0 @@
----
-- name: Install JNA and Apache Cassandra packages
-  yum: pkg={{ item }}
-  with_items:
-   #- jna
-   - dsc20
-  tags: cassandra

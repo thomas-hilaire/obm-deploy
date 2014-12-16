@@ -51,10 +51,6 @@ javaservers
 obmfullservers
 javaservers
 
-[cassandraservers:children]
-obmfullservers
-nosqlservers
-
 [opushservers:children]
 obmfullservers
 javaservers

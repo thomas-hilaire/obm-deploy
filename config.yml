@@ -43,13 +43,6 @@ remove_banner: "yes"
 ## Language of the database (fr/en)
 #obm_language: fr
 
-#### Cassandra cluster configuration
-## Use it only with OBM 3.x
-#obm_cassandra_seeds: "{{ groups['cassandraservers'][0] }}"
-#obm_cassandra_keyspace: opush
-#obm_cassandra_user: opush
-#obm_cassandra_password: opush
-
 ## The obm-sync host used by obm-ui
 obm_sync_host: "{{ groups['syncservers'][0] }}"
 
