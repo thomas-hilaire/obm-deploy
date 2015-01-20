@@ -115,10 +115,25 @@ Use admin/linagora as credentials
 
 3) send an email with 'admin' to itself using the webmail
 
+### Allow everyone to access users calendar
+
+* Administration / User profile / user / modify
+* Check "Public access" for the "calendar" and submit the form
+
 ### CREATE 100 USERS
 * Logout then login on the "bench-obm.lan" domain with admin/admin
 * Users / Import / here use the createManyUsersByUiImport.csv file
 * Run the automate
+
+## RUN THE BENCHMARK
+
+You can verify that your deployement is ready for the benchmarking by running the obm-loadtest tool during 5 minutes.
+If everything seems fine, reset the machine (see below) and start the benchmarking in a 'screen' for 12 hours.
+
+    ssh root@injecteur.ci.obm-int.dc1
+    screen
+    obm-loadtest --csv /root/obm310.csv --base-url https://bench-obm-3.ci.obm-int.dc1 --user-domain bench-obm.lan  --duration-unit hours --duration 12 --users-per-sec 0.5
+
 
 ### TO RESET A MACHINE  (on bench-obm-3)
 
