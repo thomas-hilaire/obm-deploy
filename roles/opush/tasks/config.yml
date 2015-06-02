@@ -14,6 +14,10 @@
   template: src=opush.ini dest=/etc/opush/opush.ini mode=0644 backup=yes
   tags: opush
 
+- name: Fix perms on obm_conf.ini
+  file: path=/etc/obm/obm_conf.ini mode=0644
+  tags: opush
+
 - name: Deploy Opush LDAP configuration
   template: src=ldap_conf.ini dest=/etc/opush/ldap_conf.ini mode=0644 backup=yes
   tags: opush
@@ -37,6 +41,7 @@
   when: version | version_compare('3.1.2', '>=')
   notify:
       - Restart OPush3
+  ignore_errors: true
   tags: opush
 
 - name: Start Opush3

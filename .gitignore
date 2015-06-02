@@ -10,3 +10,4 @@ testinv
 *.pyc
 .vagrant
 *.pub
+vagrant2*
